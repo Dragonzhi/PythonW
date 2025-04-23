@@ -17,16 +17,15 @@ driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # 登录页面的 URL
 login_url = 'https://newehall.nwafu.edu.cn/login'
-target_url = 'https://newehall.nwafu.edu.cn/jwapp/sys/jwwspj/*default/index.do?t_s=1745400908103&amp_sec_version_=1&gid_=SFhJLzRhY29ZemJEOGIvTmdzQlJFMzlNRHBFcXhYeTRBS3pwT2tuQk4yQ2NuRnAyWXNRMk8yNmRwSHJxc1g2TlptTTM2VmF3a01VZUlPWTRFdWRENHc9PQ&EMAP_LANG=zh&THEME=#/gcpj'
+target_url = 'https://newehall.nwafu.edu.cn/jwapp/sys/jwwspj/*default/index.do?t_s=1745427842430&amp_sec_version_=1&gid_=cUdyUURiK1h2RW82K3ZzVVJoeWp3aG0weXNnMlFsekdOZFYzaXRDV00rVVJSOU5IMUFpQjQ1RkwxN012Vkk0TUZEU2hxOVM2UXJlTUYwKzVHQnc5TGc9PQ&EMAP_LANG=zh&THEME=#/pj'
 
 # 登录所需的信息
-username = '2024013462'
-password = 'zhilong520.'
+username = '2024013464'
+password = 'wl060502'
 
 try:
-    # 打开登录页面
+    # 打开登录页面并登录
     driver.get(login_url)
-    # 找到用户名和密码输入框并输入信息
     username_input = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.NAME, 'username'))
     )
@@ -35,90 +34,93 @@ try:
     )
     username_input.send_keys(username)
     password_input.send_keys(password)
-    # 找到登录按钮并点击
     login_button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, 'login_submit'))
     )
     login_button.click()
-    time.sleep(3)  # 等待页面加载
-    # 打开目标页面
+    time.sleep(3)
+    
+    # 进入目标页面
     driver.get(target_url)
-    time.sleep(3)  # 等待页面加载
-    # 显式等待目标元素出现并点击
-    # 等待所有卡片加载完成
-    cards = WebDriverWait(driver, 10).until(
-    EC.presence_of_all_elements_located(
-        (By.CSS_SELECTOR, 
-            ".bh-card.bh-card-lv1[data-action='查询问卷详情'] .sc-panel-diagonalStrips.sc-panel-warning")
-        )
-    )
-    for i in range(len(cards)):
-        # 每次循环都重新定位卡片元素，避免 stale element 问题
-        fresh_cards = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located(
-            (By.CSS_SELECTOR, 
-                ".bh-card.bh-card-lv1[data-action='查询问卷详情'] .sc-panel-diagonalStrips.sc-panel-warning")
-            )
-        )
-        target_div = fresh_cards[i]
-        target_div.click()
+    time.sleep(3)
+
+    # 循环处理所有未提交的卡片（关键逻辑修改）
+    while True:
         try:
-            radio_groups = WebDriverWait(driver, 10).until(
+            # 重新获取当前所有未提交的卡片（确保在主页面）
+            cards = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located(
-                    (By.CSS_SELECTOR, ".sc-panel-thingNoImg-1-container.wjzb-card")
+                    (By.CSS_SELECTOR, 
+                     ".bh-card.bh-card-lv1[data-action='查询问卷详情'] .sc-panel-diagonalStrips.sc-panel-warning")
                 )
             )
-            print("radio_groups:", radio_groups)
-            if radio_groups:
-                radio_groups.pop(-1)
-            for index, group in enumerate(radio_groups):
-                try:
-                    time.sleep(0.5)  # 等待操作完成
-                    # print("Group:", group, "index:", index, "len:", len(radio_groups))
-                    input_element = WebDriverWait(group, 5).until(
-                        EC.presence_of_element_located((By.CSS_SELECTOR, 'input[data-x-dasm="完全赞同"]'))
+            if not cards:
+                print("所有卡片已处理完毕，退出循环！")
+                break
+            
+            # 处理第一个卡片（避免索引错位）
+            target_card = cards[0]
+            target_card.click()
+            time.sleep(2)
+            
+            # 处理问卷
+            try:
+                radio_groups = WebDriverWait(driver, 10).until(
+                    EC.presence_of_all_elements_located(
+                        (By.CSS_SELECTOR, ".sc-panel-thingNoImg-1-container.wjzb-card")
                     )
-                    # print("input_element:", input_element)
-                    input_element.click()
-                    print(f"成功点击第 {index + 1} 个单选题的“完全赞同”选项")
+                )
+                if radio_groups:
+                    radio_groups.pop(-1)  # 排除最后一个主观题
+                
+                for index, group in enumerate(radio_groups):
+                    try:
+                        time.sleep(0.4)
+                        input_element = WebDriverWait(group, 5).until(
+                            EC.presence_of_element_located((By.CSS_SELECTOR, 'input[data-x-dasm="完全赞同"]'))
+                        )
+                        input_element.click()
+                        print(f"成功点击第 {index + 1} 个单选题的“完全赞同”选项")
+                    except Exception as e:
+                        print(f"第 {index + 1} 个单选题出错: {str(e)}")
+                
+                # 处理主观题（如果未被排除）
+                try:
+                    subjective_textarea = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable((By.CSS_SELECTOR, 'textarea[name="YLCS"]'))
+                    )
+                    driver.execute_script("arguments[0].scrollIntoView();", subjective_textarea)
+                    subjective_textarea.send_keys("教师教学很棒，继续保持！")
+                    print("主观题输入成功")
                 except Exception as e:
-                    print(f"第 {index + 1} 个单选题出错: {str(e)}")
-            # 处理主观题
-            try:
-                subjective_textarea = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, 'textarea[name="YLCS"]'))
-                )
-                driver.execute_script("arguments[0].scrollIntoView();", subjective_textarea)
-                subjective_textarea.send_keys("教师教学很棒，继续保持！")
-                print("主观题输入成功")
-            except Exception as e:
-                print(f"主观题输入失败: {str(e)}")
-            
-            # 提交问卷 
-            try:
-                # 增加等待时间，使用更准确的定位方式
-                submit_button = WebDriverWait(driver, 2).until(  # 增加等待时间到 10 秒
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, '.bh-btn.bh-btn-success.bh-btn-large'))
-                )
+                    print(f"主观题输入失败: {str(e)}")
                 
-                submit_button.click()
-                print("提交按钮点击成功")
-                # 等待确认弹窗的确认按钮出现并点击
-                confirm_button = WebDriverWait(driver, 2).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, '.bh-dialog-btn.bh-bg-primary.bh-color-primary-5'))
-                )
-                confirm_button.click()
-                print("确认提交按钮点击成功")
+                # 提交问卷
+                try:
+                    submit_button = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable((By.CSS_SELECTOR, '.bh-btn.bh-btn-success.bh-btn-large'))
+                    )
+                    submit_button.click()
+                    print("提交按钮点击成功")
+                    
+                    # 等待确认弹窗并点击确认
+                    confirm_button = WebDriverWait(driver, 10).until(
+                        EC.element_to_be_clickable((By.CSS_SELECTOR, '.bh-dialog-btn.bh-bg-primary.bh-color-primary-5'))
+                    )
+                    confirm_button.click()
+                    print("确认提交按钮点击成功")
+                except Exception as e:
+                    print(f"提交按钮出错: {str(e)}")
+                time.sleep(3)
             except Exception as e:
-                print(f"提交按钮出错: {str(e)}")
-                
-            
+                print(f"问卷处理出错: {str(e)}")
+                driver.back()  # 出错时返回主页面继续尝试
+                time.sleep(3)
         except Exception as e:
-            print(f"整体流程出错: {str(e)}")
-        time.sleep(5)  # 等待操作完成
-    time.sleep(15)  # 等待操作完成
+            print(f"循环错误: {str(e)}")
+            break
+        time.sleep(5)
 except Exception as e:
     print(f"操作出错: {e}")
 finally:
-    # 关闭浏览器
     driver.quit()

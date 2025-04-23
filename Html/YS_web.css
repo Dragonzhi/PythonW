@@ -1,0 +1,24 @@
+body{
+  margin: 0;
+}
+
+.top {
+  width: 100%;
+  height: 70px;
+  background-color: pink;
+}
+.scarch{
+    width: 90%;
+    height: 50px;
+    border-radius: 25px;
+    margin: 10px;
+    float: left;
+    border: none;
+}
+.button_scarch{
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    margin: 10px;
+    float: right;
+}

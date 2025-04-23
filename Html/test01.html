@@ -1,0 +1,80 @@
+
+<div>
+<br>
+使用 vscode运行html代码：
+<br>
+1. 使用调试运行，就像老师上课那样；
+<br>
+2. 如果调试不行，就在vscode里下载插件 “open in browser”（见图：open in browser插件.png），然后右键 - “Open In Default Browser” 在默认浏览器中打开（见图：使用vscode插件运行html代码.png）。
+<br>
+<br>
+使用 pycharm运行html代码：pycharm会在html代码界面右上角显示浏览器图标，直接点击浏览器即可运行打开，非常方便。（见图：使用pycharm运行html代码.png）
+
+</div> 
+
+<div>输入英文的感叹号 ! 然后回车可以自动生成html的模板，文件后缀名一定要是.html才能生效</div>
+
+<!DOCTYPE html>
+<!-- lang 是指定文档的语言 -->
+<html lang="en">
+    <head>
+        <!-- 是文档的字符编码是utf-8 -->
+        <meta charset="UTF-8">
+        <!-- 告诉浏览器如何控制页面的尺寸和缩放比例 -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            p{
+                font-size: 20px;
+                line-height: 36px;
+                text-indent: 2em;
+                font-family:楷体;
+                text-align: left;}
+        </style>
+    </head>
+    <script>
+        // alert("hello world");
+        // alert("What can I say!")
+        var a = ["A","B","C"];
+        a.push("D");
+        a.unshift("E");
+        a.pop() // 删除末尾的元素
+        a.shift() // 删除开头的元素
+        console.log(a);
+
+    </script>
+    <body>
+        <!-- h1~h6字号是越来越小，如果设定了不支持的标签，不会显示任何效果 -->
+        <!-- h1只能出现一次，告诉搜索引擎，这篇文章讲的是什么，SEO -->
+        <h1>胖猫事件热度太高：媒体之过抑或是公众之过？</h1>
+        <hr>
+        <h3>连日来，“胖猫”事件在网络上掀起了一波声音各异的讨论和争议。</h3>
+        <p>尤其是在该事件占据了近日大部分的新闻份额之后，<strong>争论的话题</strong>愈见激烈也渐显共性。
+            这其中有两种声音<em>“音量”</em>较大：<ins>一种声音</ins>认为这类<del>新闻报道</del>不应占用过多公共资源，
+            特别是其衍生出的公众现实行为会导致资源浪费。
+            另一种声音认为该事件是顺应了民意且媒体报道也不是因为舆论的倒逼。
+            先说结论，在现实世界中是不存在一种可以让所有人都满意的表达的。
+            而这种现象也几乎不会以某一方的意志为转移。
+        <!-- 这里的src可以写网址的路径，也可以写本地的相对路径 -->
+        <!-- alt是图片的描述，如果图片显示失败就显示alt -->
+        <img src="https://nimg.ws.126.net/?url=http%3A%2F%2Fdingyue.ws.126.net%2F2024%2F0510%2Fe279990ej00sd9v6q000sd000gz00fmm.jpg&thumbnail=660x2147483647&quality=80&type=jpg"
+        alt="图片1"
+        title="图片"
+        width="400">
+        <h3>报道新闻是媒体的基本职能所在</h3>    
+        <p>对于新近发生的事实的报道也是新闻时效性的要求。而新闻媒体在很大程度上也不会以满足某一方的期望来筛选新闻事件，这个筛选是建立在绝大多数受众的基础之上。用个别自媒体或不良媒体的“失德”行为来让所有新闻媒体挨打也确实有失公允。换言之，尽管新闻媒体不能保证每条新闻都能够被公众所看到，但是绝大部分新闻是会呈现给公众并且反馈社情民意的。
+        </p>
+        </p>
+    </body>
+</html>
+
+
+<div>
+    
+修改代码后要记得 保存 !!!
+<br>
+ctrl+s 保存, 99%的软件和文件都是用ctrl+s保存。养成随手保存的习惯, 很多人没有这个好习惯，导致文件丢失。
+<br>
+代码修改后运行没反应、前端代码修改后页面没变化、文件修改后内容读取不正确、转换文件格式后是空白的，都是因为没保存。
+
+</div>

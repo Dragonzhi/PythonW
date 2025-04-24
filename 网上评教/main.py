@@ -6,13 +6,27 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import random
-
+import tkinter as tk
+from tkinter import simpledialog
 # 登录所需的信息
 # username = '2024013464'
 # password = 'wl060502'
 
-username = input("请输入学号：")
-password = input("请输入密码：")
+# 创建主窗口
+root = tk.Tk()
+root.withdraw()  # 隐藏主窗口
+
+# 使用 simpledialog 获取用户输入
+username = simpledialog.askstring("输入", "请输入学号：")
+password = simpledialog.askstring("输入", "请输入密码：", show='*')
+
+# username = input("请输入学号：")
+# password = input("请输入密码：")
+
+# 登录页面的 URL
+login_url = 'https://newehall.nwafu.edu.cn/login'
+target_url = simpledialog.askstring("输入", "请输入过程评教的地址：")
+
 
 comments = [
     "教师教学很棒！",
@@ -30,12 +44,6 @@ chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x
 chromedriver_path = "C:\Program Files\Google\Chrome\Application\chromedriver.exe"
 service = Service(chromedriver_path)
 driver = webdriver.Chrome(service=service, options=chrome_options)
-
-# 登录页面的 URL
-login_url = 'https://newehall.nwafu.edu.cn/login'
-target_url = 'https://newehall.nwafu.edu.cn/jwapp/sys/jwwspj/*default/index.do?t_s=1745427842430&amp_sec_version_=1&gid_=cUdyUURiK1h2RW82K3ZzVVJoeWp3aG0weXNnMlFsekdOZFYzaXRDV00rVVJSOU5IMUFpQjQ1RkwxN012Vkk0TUZEU2hxOVM2UXJlTUYwKzVHQnc5TGc9PQ&EMAP_LANG=zh&THEME=#/pj'
-
-
 
 try:
     # 打开登录页面并登录
@@ -57,9 +65,12 @@ try:
     # 进入目标页面
     driver.get(target_url)
     time.sleep(3)
-
+    flag = True
+    if "统一身份认证" in driver.title:  # 检查是否需要进行统一身份认证
+        flag = False
+        print("登入失败，请检查账号密码是否正确")
     # 循环处理所有未提交的卡片（关键逻辑修改）
-    while True:
+    while flag:
         try:
             try:
                 # 重新获取当前所有未提交的卡片（确保在主页面）

@@ -20,7 +20,9 @@ root.withdraw()  # 隐藏主窗口
 
 # 使用 simpledialog 获取用户输入
 username = simpledialog.askstring("输入", "请输入学号：")
+print("username:",username)
 password = simpledialog.askstring("输入", "请输入密码：", show='*')
+print("password:",password)
 # 登录所需的信息
 # username = '2024013462'
 # password = 'zhilong520.'
@@ -51,16 +53,35 @@ chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x
 # service = Service(ChromeDriverManager().install())
 # driver = webdriver.Chrome(service=service, options=chrome_options)
 
-# 检查是否是打包后的可执行文件
+# pyinstaller --onefile main结果.py
+
 if getattr(sys, 'frozen', False):
-    # 如果是打包后的可执行文件
-    chromedriver_path = os.path.join(sys._MEIPASS, 'chromedriver.exe')
+    base_path = simpledialog.askstring("输入", "请输入Driver路径：")
+    print("pathbase:",base_path)
+    print("打包环境中尝试使用本地 ChromeDriver ...")
+    # 获取打包后可执行文件所在目录
+    chromedriver_path = os.path.join(base_path, 'chromedriver.exe')
+    try:
+        print("尝试使用本地 ChromeDriver...")
+        service = Service(chromedriver_path)
+        # 尝试初始化 Chrome 驱动，验证驱动是否可用
+        test_driver = webdriver.Chrome(service=service, options=chrome_options)
+        test_driver.quit()
+        print("找到本地 ChromeDriver，使用本地驱动...")
+    except Exception as e:
+        print(f"使用本地 ChromeDriver 失败，错误信息: {str(e)}，动态下载驱动...")
+        # 设置国内镜像源
+        os.environ['WDM_SOURCE_URL'] = "https://registry.npmmirror.com/-/binary/chromedriver"
+        # 打包环境，使用 webdriver_manager 动态获取 ChromeDriver
+        service = Service(ChromeDriverManager().install())
+        print("使用动态获取的 ChromeDriver 完成")
 else:
     # 开发环境
     chromedriver_path = "C:\Program Files\Google\Chrome\Application\chromedriver.exe"
-
-service = Service(chromedriver_path)
+    service = Service(chromedriver_path)
+    print("开发环境中使用指定的 ChromeDriver...")
 driver = webdriver.Chrome(service=service, options=chrome_options)
+
 
 try:
     # 打开登录页面并登录

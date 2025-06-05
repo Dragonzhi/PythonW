@@ -5,7 +5,7 @@ a = Analysis(
     ['main结果.py'],
     pathex=[],
     binaries=[],
-    datas=[('chromedriver.exe', '.')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
